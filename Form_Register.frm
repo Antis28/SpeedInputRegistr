@@ -31,6 +31,7 @@ End Sub
 Private Sub bt_LoadNext_Click()
     regNumber = regNumber + 1
     Call LoadRegister(regNumber)
+    cb_docNames.SetFocus
 End Sub
 
 Private Sub cb_FillAll_Click()
@@ -41,6 +42,7 @@ End Sub
 Private Sub LoadLast_Click()
     regNumber = regNumber - 1
     Call LoadRegister(regNumber)
+    cb_docNames.SetFocus
 End Sub
 
 Private Sub cb_addOKPO_Click()
@@ -781,7 +783,7 @@ Private Sub AggregateCovers()
     ' документ для агрегации обложек
     Set coverDoc = CreateNewAggregateDoc()
     
-    For i = myBase.CountInKprBase To 1 Step -1
+    For i = 1 To myBase.CountInKprBase Step 1
         ' Загрузить информацию об описи о обложке
         Call LoadRegister(i)
         
@@ -824,7 +826,7 @@ Private Sub AggregateRegisters()
     ' документ для агрегации описей
     Set regDoc = CreateNewAggregateDoc()
     
-    For i = myBase.CountInKprBase To 1 Step -1
+    For i = 1 To myBase.CountInKprBase Step 1
         ' Загрузить информацию об описи о обложке
         Call LoadRegister(i)
         
