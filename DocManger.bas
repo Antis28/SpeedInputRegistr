@@ -147,20 +147,15 @@ Private Function PrepareCover(curRegister As C_RegisterInfo) As C_CoverInfo
 End Function
 
 Private Sub FillOneCoverDoc(nameIndex As String, cover As C_CoverInfo)
-    Dim newFolderPath As String
-    Dim newFolderName As String
-    newFolderName = "ОБЛОЖКИ"
-    newFolderPath = ActiveDocument.path & "\" & newFolderName
-    If Dir(newFolderPath, vbDirectory) = "" Then
-        MkDir newFolderPath
-    End If
-    
+    Call CreateFolder("ОБЛОЖКИ")
     
     ' Создать новый файл по шаблону с обложкой
     CreateNewCoverDoc
     
     ' Заполнить документ с обложкой
     FillCoverDoc cover
+    
+    ' Сгенирировать имя документа "обложка"
     Dim fileNameWithCover As String
     fileNameWithCover = nameIndex & "_C_" & cover.sheetCount & "л_" & cover.NameEnterprise
         
@@ -170,24 +165,29 @@ Private Sub FillOneCoverDoc(nameIndex As String, cover As C_CoverInfo)
 End Sub
 
 Private Sub FillOneRegisterDoc(nameIndex As String, cover As C_CoverInfo)
-    Dim newFolderPath As String
-    Dim newFolderName As String
-    newFolderName = "ОПИСИ"
-    newFolderPath = ActiveDocument.path & "\" & newFolderName
-    
-    If Dir(newFolderPath, vbDirectory) = "" Then
-        MkDir newFolderPath
-    End If
+    Call CreateFolder("ОПИСИ")
     
     ' Создать новый файл по шаблону с описью
     CreateNewRegisterDoc
     
     ' Заполнить документ внутреннюю опись
     FillRegister cover
+    
+    ' Сгенирировать имя документа "внутренняя опись"
     Dim fileNameWithRegister As String
     fileNameWithRegister = nameIndex & "_R_" & cover.sheetCount & "л_" & cover.NameEnterprise
     
     ' Сохранить в word документ
     SaveAccompanying newFolderName & "\" & fileNameWithRegister
     ActiveDocument.Close
+End Sub
+
+Private Sub CreateFolder(newFolderName As String)
+    Dim newFolderPath As String
+    
+    newFolderPath = ActiveDocument.path & "\" & newFolderName
+    
+    If Dir(newFolderPath, vbDirectory) = "" Then
+        MkDir newFolderPath
+    End If
 End Sub
