@@ -25,7 +25,7 @@ Public Sub CreateNewCoverDoc()
     
     templatePath = "C:\Documents and Settings\PENSION\Рабочий стол\Обложки для архива КПР\"
     If Dir(templatePath) = "" Then
-        templatePath = "C:\Users\Antis\Desktop\1111111111\"
+        templatePath = "M:\My_projects\My_Progi\VBA\Автоматизция описи\"
     End If
     
     fullPath = templatePath & templateName
@@ -42,7 +42,7 @@ Public Sub CreateNewRegisterDoc()
     
     templatePath = "C:\Documents and Settings\PENSION\Рабочий стол\Обложки для архива КПР\"
     If Dir(templatePath) = "" Then
-        templatePath = "C:\Users\Antis\Desktop\1111111111\"
+        templatePath = "M:\My_projects\My_Progi\VBA\Автоматизция описи\"
     End If
     
     fullPath = templatePath & templateName
@@ -147,6 +147,15 @@ Private Function PrepareCover(curRegister As C_RegisterInfo) As C_CoverInfo
 End Function
 
 Private Sub FillOneCoverDoc(nameIndex As String, cover As C_CoverInfo)
+    Dim newFolderPath As String
+    Dim newFolderName As String
+    newFolderName = "ОБЛОЖКИ"
+    newFolderPath = ActiveDocument.path & "\" & newFolderName
+    If Dir(newFolderPath, vbDirectory) = "" Then
+        MkDir newFolderPath
+    End If
+    
+    
     ' Создать новый файл по шаблону с обложкой
     CreateNewCoverDoc
     
@@ -154,13 +163,22 @@ Private Sub FillOneCoverDoc(nameIndex As String, cover As C_CoverInfo)
     FillCoverDoc cover
     Dim fileNameWithCover As String
     fileNameWithCover = nameIndex & "_C_" & cover.sheetCount & "л_" & cover.NameEnterprise
-    
+        
     ' Сохранить  word документ
-    SaveAccompanying "ОБЛОЖКИ\" & fileNameWithCover
+    SaveAccompanying newFolderName & "\" & fileNameWithCover
     ActiveDocument.Close
 End Sub
 
 Private Sub FillOneRegisterDoc(nameIndex As String, cover As C_CoverInfo)
+    Dim newFolderPath As String
+    Dim newFolderName As String
+    newFolderName = "ОПИСИ"
+    newFolderPath = ActiveDocument.path & "\" & newFolderName
+    
+    If Dir(newFolderPath, vbDirectory) = "" Then
+        MkDir newFolderPath
+    End If
+    
     ' Создать новый файл по шаблону с описью
     CreateNewRegisterDoc
     
@@ -170,6 +188,6 @@ Private Sub FillOneRegisterDoc(nameIndex As String, cover As C_CoverInfo)
     fileNameWithRegister = nameIndex & "_R_" & cover.sheetCount & "л_" & cover.NameEnterprise
     
     ' Сохранить в word документ
-    SaveAccompanying "ОПИСИ\" & fileNameWithRegister
+    SaveAccompanying newFolderName & "\" & fileNameWithRegister
     ActiveDocument.Close
 End Sub

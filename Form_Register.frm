@@ -7,7 +7,7 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form_Register
    ClientTop       =   336
    ClientWidth     =   7572
    StartUpPosition =   1  'CenterOwner
-   TypeInfoVer     =   117
+   TypeInfoVer     =   120
 End
 Attribute VB_Name = "Form_Register"
 Attribute VB_Base = "0{1EB37D80-B564-4705-A43F-8041382E3FE4}{4473B81F-4065-4D70-B524-9C444C973791}"
@@ -29,18 +29,21 @@ Private Sub cb_calc_Click()
 End Sub
 
 Private Sub bt_LoadNext_Click()
-'myBase.LoadAllBases
     regNumber = regNumber + 1
-    Call LoadRegister
+    Call LoadRegister(regNumber)
 End Sub
 
-Private Sub cb_formDocs_Click()
-
+Private Sub cb_FillAll_Click()
+    Dim i As Integer
+    For i = myBase.CountInKprBase To 1 Step -1
+        Call LoadRegister(i)
+        Call FillDocByTemplates
+    Next i
 End Sub
 
 Private Sub LoadLast_Click()
     regNumber = regNumber - 1
-    Call LoadRegister
+    Call LoadRegister(regNumber)
 End Sub
 
 Private Sub cb_addOKPO_Click()
@@ -51,9 +54,6 @@ Private Sub cb_AddTemplates_Click()
     myBase.AddNewNameDoc (cb_docNames.value)
     ShowRecordTemplates
 End Sub
-
-
-
 
 Private Sub cb_ClearRecords_Click()
    Call CreateNewRegister
@@ -254,21 +254,11 @@ Private Sub cb_LineDown_Click()
 End Sub
 
 
-Private Sub cb_NextForm_Click()
-    ' Нет записей в описи
-    If register.count = 0 Then
-        Exit Sub
-    End If
-
-    Dim registers As Collection
+Private Sub cb_FillDocument_Click()
     
-    ' если в деле больше 250 стр., то его необходимо поделить на тома
-    Set registers = DivRegister()
-    
-    FillDocument registers
+    Call FillDocByTemplates
     
     'HideForm
-    
     If cb_CloseAfterFilling.value Then
         Application.Quit
     End If
@@ -601,15 +591,14 @@ Private Sub LoadRegisterByIndex(regNumber As Integer)
     l_indexInBase.Caption = temp.index
 End Sub
 
-Private Sub CheckRegNumber()
-     If regNumber < 1 Then
-        regNumber = 1
-        Exit Sub
-    ElseIf regNumber > myBase.CountInKprBase Then
-        regNumber = myBase.CountInKprBase
-        Exit Sub
+Private Function CheckRegNumber(ByVal index As Integer) As Integer
+    If index < 1 Then
+       index = 1
+    ElseIf index > myBase.CountInKprBase Then
+       index = myBase.CountInKprBase
     End If
-End Sub
+    CheckRegNumber = index
+End Function
 
 Public Sub ClearInputField()
     tb_DateFirst.text = ""
@@ -721,9 +710,9 @@ Private Sub ShowLastChanged(regNumber As Integer)
     Form_Register.Caption = formCaption & " Изменен: " & myBase.GetKprItem(regNumber).lastChange
 End Sub
 
-Private Sub LoadRegister()
-    
-    Call CheckRegNumber
+Private Sub LoadRegister(ByVal index As Integer)
+    Dim regNumber As Integer
+    regNumber = CheckRegNumber(index)
     Call LoadRegisterByIndex(regNumber)
     Call UpdateScreen
     Call ClearAllFlags
@@ -767,4 +756,20 @@ Private Sub MoveRecordToDown()
     
      ' Выделение строки
     lb_RecordsList.listIndex = index + 1
+End Sub
+
+Private Sub FillDocByTemplates()
+    Dim registers As Collection ' список описей
+
+    ' Нет записей в описи
+    If register.count = 0 Then
+        Exit Sub
+    End If
+    
+    ' если в деле больше 250 стр., то его необходимо поделить на тома
+    Set registers = DivRegister()
+    
+    
+    ' заполнить шаблоны для описи и обложки
+    FillDocument registers
 End Sub

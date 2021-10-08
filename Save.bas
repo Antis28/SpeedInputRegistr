@@ -14,7 +14,7 @@ Sub SaveAccompanying(nameDoc As String)
     
     ' Для документа
     'newFolderPath = ActiveDocument.Path
-    newFolderPath = newFolderPath & "\Обложки"
+    newFolderPath = newFolderPath
     ' создать папку для документа
     MkDir newFolderPath
     
