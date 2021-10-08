@@ -37,7 +37,7 @@ Private Sub cb_FillAll_Click()
     Dim i As Integer
     For i = myBase.CountInKprBase To 1 Step -1
         Call LoadRegister(i)
-        Call FillDocByTemplatesAndSave
+        Call FillDocByTemplatesAndAggregate
     Next i
 End Sub
 
@@ -787,5 +787,5 @@ Private Sub FillDocByTemplatesAndAggregate()
     
     
     ' заполнить шаблоны для описи и обложки
-    FillDocumentAndSave registers
+    FillDocumentAndAggregate registers
 End Sub

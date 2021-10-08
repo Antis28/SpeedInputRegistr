@@ -195,48 +195,31 @@ End Sub
 
 '---------------------------------------------------------------------------------------------
 
-Private Sub FillOneCoverDocAndAggregate(nameIndex As String, cover As C_CoverInfo)
-       
-    ' Создать новый файл по шаблону с обложкой
-    CreateNewCoverDoc
-    
-    ' Заполнить документ с обложкой
-    FillCoverDoc cover
-    
-    ActiveDocument.Close
-End Sub
-
-Private Sub FillOneRegisterDocAndAggregate(nameIndex As String, cover As C_CoverInfo)
-        
-    ' Создать новый файл по шаблону с описью
-    CreateNewRegisterDoc
-    
-    ' Заполнить документ внутреннюю опись
-    FillRegister cover
-    
-    
-    ActiveDocument.Close
-End Sub
-
-
 Public Sub FillDocumentAndAggregate(registers As Collection)
             
     Dim item As C_RegisterInfo
     For Each item In registers
         Call Form_Register.FixPageNumbers(1, item)
-        Call FillOneDocumentAndSave(item)
+        Call FillOneCoverDocAndAggregate(item)
+    Next
+    
+    For Each item In registers
+        Call FillOneRegisterDocAndAggregate(item)
     Next
 End Sub
 
 
-Public Sub FillOneDocumentAndAggregate(curRegister As C_RegisterInfo)
-       
+Public Sub FillOneCoverDocAndAggregate(curRegister As C_RegisterInfo)
     Dim cover As C_CoverInfo
     Set cover = PrepareCover(curRegister)
-        
-    Call FillOneCoverDocAndSave(nameIndex, cover)
-    Call FillOneRegisterDocAndSave(nameIndex, cover)
+    Call FillOneCoverDoc(cover)
     
+End Sub
+
+Public Sub FillOneRegisterDocAndAggregate(curRegister As C_RegisterInfo)
+    Dim cover As C_CoverInfo
+    Set cover = PrepareCover(curRegister)
+    Call FillOneCoverDoc(cover)
 End Sub
 
 Private Sub FillOneCoverDoc(cover As C_CoverInfo)
