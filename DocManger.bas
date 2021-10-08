@@ -151,11 +151,7 @@ Private Sub FillOneCoverDocAndSave(nameIndex As String, cover As C_CoverInfo)
     newFolderName = "ОБЛОЖКИ"
     Call CreateFolder(newFolderName)
     
-    ' Создать новый файл по шаблону с обложкой
-    CreateNewCoverDoc
-    
-    ' Заполнить документ с обложкой
-    FillCoverDoc cover
+    Call FillOneCoverDoc(cover)
     
     ' Сгенирировать имя документа "обложка"
     Dim fileNameWithCover As String
@@ -173,11 +169,7 @@ Private Sub FillOneRegisterDocAndSave(nameIndex As String, cover As C_CoverInfo)
     newFolderName = "ОПИСИ"
     Call CreateFolder(newFolderName)
     
-    ' Создать новый файл по шаблону с описью
-    CreateNewRegisterDoc
-    
-    ' Заполнить документ внутреннюю опись
-    FillRegister cover
+    Call FillOneRegisterDoc(cover)
     
     ' Сгенирировать имя документа "внутренняя опись"
     Dim fileNameWithRegister As String
@@ -203,7 +195,7 @@ End Sub
 
 '---------------------------------------------------------------------------------------------
 
-Private Sub FillOneCoverDocAndAddToAgregator(nameIndex As String, cover As C_CoverInfo)
+Private Sub FillOneCoverDocAndAggregate(nameIndex As String, cover As C_CoverInfo)
        
     ' Создать новый файл по шаблону с обложкой
     CreateNewCoverDoc
@@ -214,7 +206,7 @@ Private Sub FillOneCoverDocAndAddToAgregator(nameIndex As String, cover As C_Cov
     ActiveDocument.Close
 End Sub
 
-Private Sub FillOneRegisterDocAndAddToAgregator(nameIndex As String, cover As C_CoverInfo)
+Private Sub FillOneRegisterDocAndAggregate(nameIndex As String, cover As C_CoverInfo)
         
     ' Создать новый файл по шаблону с описью
     CreateNewRegisterDoc
@@ -224,4 +216,41 @@ Private Sub FillOneRegisterDocAndAddToAgregator(nameIndex As String, cover As C_
     
     
     ActiveDocument.Close
+End Sub
+
+
+Public Sub FillDocumentAndAggregate(registers As Collection)
+            
+    Dim item As C_RegisterInfo
+    For Each item In registers
+        Call Form_Register.FixPageNumbers(1, item)
+        Call FillOneDocumentAndSave(item)
+    Next
+End Sub
+
+
+Public Sub FillOneDocumentAndAggregate(curRegister As C_RegisterInfo)
+       
+    Dim cover As C_CoverInfo
+    Set cover = PrepareCover(curRegister)
+        
+    Call FillOneCoverDocAndSave(nameIndex, cover)
+    Call FillOneRegisterDocAndSave(nameIndex, cover)
+    
+End Sub
+
+Private Sub FillOneCoverDoc(cover As C_CoverInfo)
+    ' Создать новый файл по шаблону с обложкой
+   Call CreateNewCoverDoc
+    
+    ' Заполнить документ с обложкой
+   Call FillCoverDoc(cover)
+End Sub
+
+Private Sub FillOneRegisterDoc(cover As C_CoverInfo)
+    ' Создать новый файл по шаблону с описью
+   Call CreateNewRegisterDoc
+    
+    ' Заполнить документ внутреннюю опись
+   Call FillRegister(cover)
 End Sub

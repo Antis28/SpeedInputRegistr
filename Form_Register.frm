@@ -37,7 +37,7 @@ Private Sub cb_FillAll_Click()
     Dim i As Integer
     For i = myBase.CountInKprBase To 1 Step -1
         Call LoadRegister(i)
-        Call FillDocByTemplates
+        Call FillDocByTemplatesAndSave
     Next i
 End Sub
 
@@ -256,7 +256,7 @@ End Sub
 
 Private Sub cb_FillDocument_Click()
     
-    Call FillDocByTemplates
+    Call FillDocByTemplatesAndSave
     
     'HideForm
     If cb_CloseAfterFilling.value Then
@@ -758,7 +758,23 @@ Private Sub MoveRecordToDown()
     lb_RecordsList.listIndex = index + 1
 End Sub
 
-Private Sub FillDocByTemplates()
+Private Sub FillDocByTemplatesAndSave()
+    Dim registers As Collection ' список описей
+
+    ' Ќет записей в описи
+    If register.count = 0 Then
+        Exit Sub
+    End If
+    
+    ' если в деле больше 250 стр., то его необходимо поделить на тома
+    Set registers = DivRegister()
+    
+    
+    ' заполнить шаблоны дл€ описи и обложки
+    FillDocumentAndSave registers
+End Sub
+
+Private Sub FillDocByTemplatesAndAggregate()
     Dim registers As Collection ' список описей
 
     ' Ќет записей в описи
