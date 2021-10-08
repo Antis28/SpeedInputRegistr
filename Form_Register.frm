@@ -36,8 +36,30 @@ End Sub
 Private Sub cb_FillAll_Click()
     Dim i As Integer
     For i = myBase.CountInKprBase To 1 Step -1
+        ' Загрузить информацию об описи о обложке
         Call LoadRegister(i)
-        Call FillDocByTemplatesAndAggregate
+        
+        ' Нет записей в описи, идем дальше
+        If register.count = 0 Then
+            Next i
+        End If
+        
+        Dim registers As Collection ' список описей
+        ' если в деле больше 250 стр., то его необходимо поделить на тома
+        Set registers = DivRegister()
+                
+        ' заполнить тома обложки
+        Dim item As C_RegisterInfo
+        For Each item In registers
+            Call Form_Register.FixPageNumbers(1, item)
+            
+            ' заполнить 1 обложку
+            Dim cover As C_CoverInfo
+            Set cover = PrepareCover(item)
+            Call FillOneCoverDoc(cover)
+            
+            
+        Next
     Next i
 End Sub
 
@@ -772,20 +794,4 @@ Private Sub FillDocByTemplatesAndSave()
     
     ' заполнить шаблоны для описи и обложки
     FillDocumentAndSave registers
-End Sub
-
-Private Sub FillDocByTemplatesAndAggregate()
-    Dim registers As Collection ' список описей
-
-    ' Нет записей в описи
-    If register.count = 0 Then
-        Exit Sub
-    End If
-    
-    ' если в деле больше 250 стр., то его необходимо поделить на тома
-    Set registers = DivRegister()
-    
-    
-    ' заполнить шаблоны для описи и обложки
-    FillDocumentAndAggregate registers
 End Sub

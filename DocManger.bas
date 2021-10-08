@@ -201,21 +201,6 @@ End Sub
 
 
 '---------------------------------------------------------------------------------------------
-
-Public Sub FillDocumentAndAggregate(registers As Collection)
-            
-    Dim item As C_RegisterInfo
-    For Each item In registers
-        Call Form_Register.FixPageNumbers(1, item)
-        Call FillOneCoverDocAndAggregate(item)
-    Next
-    
-    For Each item In registers
-        Call FillOneRegisterDocAndAggregate(item)
-    Next
-End Sub
-
-
 Public Sub FillOneCoverDocAndAggregate(curRegister As C_RegisterInfo)
     Dim cover As C_CoverInfo
     Set cover = PrepareCover(curRegister)
