@@ -40,8 +40,6 @@ Private Sub cb_FillAll_Click()
     ' документ для агрегации обложек
     Set coverDoc = CreateNewAggregateDoc()
     
-    coverDoc.Activate
-    
     For i = myBase.CountInKprBase To 1 Step -1
         ' Загрузить информацию об описи о обложке
         Call LoadRegister(i)
@@ -62,6 +60,14 @@ Private Sub cb_FillAll_Click()
             
             ' заполнить 1 обложку
             Call FillOneCoverDocByRegister(item)
+            
+            Selection.WholeStory
+            Selection.Copy
+            ActiveDocument.Close SaveChanges:=wdDoNotSaveChanges
+            coverDoc.Activate
+            Selection.Paste
+            
+            SaveAccompanying "Все обложки"
         Next
 nextCoverRec:
     Next i
