@@ -64,8 +64,8 @@ Public Sub FillOneDocument(curRegister As C_RegisterInfo)
     Dim nameIndex As String
     nameIndex = TestNameZero(cover.index)
     
-    Call FillOneCoverDoc(nameIndex, cover)
-    Call FillOneRegisterDoc(nameIndex, cover)
+    Call FillOneCoverDocAndSave(nameIndex, cover)
+    Call FillOneRegisterDocAndSave(nameIndex, cover)
     
 End Sub
 
@@ -146,7 +146,7 @@ Private Function PrepareCover(curRegister As C_RegisterInfo) As C_CoverInfo
     Set PrepareCover = cover
 End Function
 
-Private Sub FillOneCoverDoc(nameIndex As String, cover As C_CoverInfo)
+Private Sub FillOneCoverDocAndSave(nameIndex As String, cover As C_CoverInfo)
     Call CreateFolder("ќЅЋќ∆ »")
     
     ' —оздать новый файл по шаблону с обложкой
@@ -164,7 +164,7 @@ Private Sub FillOneCoverDoc(nameIndex As String, cover As C_CoverInfo)
     ActiveDocument.Close
 End Sub
 
-Private Sub FillOneRegisterDoc(nameIndex As String, cover As C_CoverInfo)
+Private Sub FillOneRegisterDocAndSave(nameIndex As String, cover As C_CoverInfo)
     Call CreateFolder("ќѕ»—»")
     
     ' —оздать новый файл по шаблону с описью
