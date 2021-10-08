@@ -16,14 +16,15 @@ Public Sub CreateNewDocment()
 End Sub
 
 ' Создать документ для агрегации по шаблону
-Public Sub CreateNewAggregateDoc()
+Public Function CreateNewAggregateDoc() As Document
     Dim templateName As String
     templateName = "#Композиция#.dot"
     
     Dim templateFullPath As String
     templateFullPath = GenerateFullPath(templateName)
-    Documents.Add templateFullPath
-End Sub
+    
+    Set CreateNewAggregateDoc = Documents.Add(templateFullPath)
+End Function
 
 ' Создать документ обложки по шаблону
 Public Sub CreateNewCoverDoc()
@@ -201,12 +202,6 @@ End Sub
 
 
 '---------------------------------------------------------------------------------------------
-Public Sub FillOneCoverDocAndAggregate(curRegister As C_RegisterInfo)
-    Dim cover As C_CoverInfo
-    Set cover = PrepareCover(curRegister)
-    Call FillOneCoverDoc(cover)
-    
-End Sub
 
 Public Sub FillOneRegisterDocAndAggregate(curRegister As C_RegisterInfo)
     Dim cover As C_CoverInfo
@@ -214,7 +209,15 @@ Public Sub FillOneRegisterDocAndAggregate(curRegister As C_RegisterInfo)
     Call FillOneRegisterDoc(cover)
 End Sub
 
+Public Sub FillOneCoverDocByRegister(curRegister As C_RegisterInfo)
+    Dim cover As C_CoverInfo
+    Set cover = PrepareCover(curRegister)
+
+    Call FillOneCoverDoc(cover)
+End Sub
+
 Private Sub FillOneCoverDoc(cover As C_CoverInfo)
+
     ' Создать новый файл по шаблону с обложкой
    Call CreateNewCoverDoc
     

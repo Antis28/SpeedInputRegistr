@@ -35,13 +35,20 @@ End Sub
 
 Private Sub cb_FillAll_Click()
     Dim i As Integer
+    Dim coverDoc As Document
+    
+    ' документ для агрегации обложек
+    Set coverDoc = CreateNewAggregateDoc()
+    
+    coverDoc.Activate
+    
     For i = myBase.CountInKprBase To 1 Step -1
         ' Загрузить информацию об описи о обложке
         Call LoadRegister(i)
         
         ' Нет записей в описи, идем дальше
         If register.count = 0 Then
-            Next i
+            GoTo nextCoverRec
         End If
         
         Dim registers As Collection ' список описей
@@ -54,12 +61,9 @@ Private Sub cb_FillAll_Click()
             Call Form_Register.FixPageNumbers(1, item)
             
             ' заполнить 1 обложку
-            Dim cover As C_CoverInfo
-            Set cover = PrepareCover(item)
-            Call FillOneCoverDoc(cover)
-            
-            
+            Call FillOneCoverDocByRegister(item)
         Next
+nextCoverRec:
     Next i
 End Sub
 
