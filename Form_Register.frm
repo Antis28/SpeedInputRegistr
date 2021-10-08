@@ -2,12 +2,12 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form_Register 
    OleObjectBlob   =   "Form_Register.frx":0000
    Caption         =   "ОБЛОЖКА + ВНУТРЕННЯЯ ОПИСЬ"
-   ClientHeight    =   8310
-   ClientLeft      =   45
-   ClientTop       =   330
-   ClientWidth     =   7575
+   ClientHeight    =   8304
+   ClientLeft      =   48
+   ClientTop       =   336
+   ClientWidth     =   7572
    StartUpPosition =   1  'CenterOwner
-   TypeInfoVer     =   115
+   TypeInfoVer     =   117
 End
 Attribute VB_Name = "Form_Register"
 Attribute VB_Base = "0{1EB37D80-B564-4705-A43F-8041382E3FE4}{4473B81F-4065-4D70-B524-9C444C973791}"
@@ -22,7 +22,7 @@ Option Explicit
 Private id As Integer
 Private regNumber As Integer 'номер описи в базе
 Private formCaption As String
-
+Private oldSpinValue As Integer
 
 Private Sub cb_calc_Click()
     tb_SheetsNumber.text = CalculateSheetCount(tb_sheetCount.text, register.count)
@@ -151,6 +151,16 @@ Private Sub cb_UpdateTemplates_Click()
     ShowRecordTemplates
 End Sub
 
+
+Private Sub SpinButton1_Change()
+    If SpinButton1.value > oldSpinValue Then
+        MoveRecordToUp
+    Else
+        MoveRecordToDown
+    End If
+    oldSpinValue = SpinButton1.value
+End Sub
+
 Private Sub tb_DateFirst_Change()
     Dim sheetCount As String
     sheetCount = tb_DateFirst.value
@@ -183,6 +193,7 @@ Private Sub tb_sheetCount_Change()
 End Sub
 
 Private Sub UserForm_Activate()
+    oldSpinValue = SpinButton1.value
     formCaption = Form_Register.Caption
     InitUniqNumbers
     Set register = New C_RegisterInfo
@@ -235,43 +246,11 @@ End Sub
 
 
 Private Sub cb_LineUp_Click()
-    Dim index As Integer
-    index = lb_RecordsList.listIndex
-    
-    If index < 1 Then
-        Exit Sub
-    End If
-    
-    Call register.swap(index - 1, index)
-    
-      ' Пересчет страниц
-    Call FixPageNumbers(1, register)
-    
-    UpdateScreen
-    
-    ' Выделение строки
-    lb_RecordsList.listIndex = index - 1
+    MoveRecordToUp
 End Sub
 
 Private Sub cb_LineDown_Click()
-    Dim index As Integer
-    index = lb_RecordsList.listIndex
-
-     If index < 0 Or index > lb_RecordsList.ListCount - 2 Then
-          Exit Sub
-    End If
-    
-    register.swap index + 1, index
-    
-    ' Пересчет страниц
-    Call FixPageNumbers(1, register)
-    
-    UpdateScreen
-    
-     ' Выделение строки
-    lb_RecordsList.listIndex = index + 1
-    
-    
+    MoveRecordToDown
 End Sub
 
 
@@ -750,4 +729,42 @@ Private Sub LoadRegister()
     Call ClearAllFlags
     
     Call ShowLastChanged(regNumber)
+End Sub
+
+Private Sub MoveRecordToUp()
+    Dim index As Integer
+    index = lb_RecordsList.listIndex
+    
+    If index < 1 Then
+        Exit Sub
+    End If
+    
+    Call register.swap(index - 1, index)
+    
+      ' Пересчет страниц
+    Call FixPageNumbers(1, register)
+    
+    UpdateScreen
+    
+    ' Выделение строки
+    lb_RecordsList.listIndex = index - 1
+End Sub
+
+Private Sub MoveRecordToDown()
+    Dim index As Integer
+    index = lb_RecordsList.listIndex
+
+    If index < 0 Or index > lb_RecordsList.ListCount - 2 Then
+          Exit Sub
+    End If
+    
+    register.swap index + 1, index
+    
+    ' Пересчет страниц
+    Call FixPageNumbers(1, register)
+    
+    UpdateScreen
+    
+     ' Выделение строки
+    lb_RecordsList.listIndex = index + 1
 End Sub
