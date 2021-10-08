@@ -771,5 +771,5 @@ Private Sub FillDocByTemplates()
     
     
     ' заполнить шаблоны для описи и обложки
-    FillDocument registers
+    FillDocumentAndSave registers
 End Sub

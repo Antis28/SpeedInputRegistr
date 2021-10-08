@@ -49,8 +49,16 @@ Public Sub CreateNewRegisterDoc()
     Documents.Add fullPath
 End Sub
 
+Public Sub FillDocumentAndSave(registers As Collection)
+            
+    Dim item As C_RegisterInfo
+    For Each item In registers
+        Call Form_Register.FixPageNumbers(1, item)
+        Call FillOneDocumentAndSave(item)
+    Next
+End Sub
 
-Public Sub FillOneDocument(curRegister As C_RegisterInfo)
+Public Sub FillOneDocumentAndSave(curRegister As C_RegisterInfo)
        
     Dim cover As C_CoverInfo
     Set cover = PrepareCover(curRegister)
@@ -69,15 +77,7 @@ Public Sub FillOneDocument(curRegister As C_RegisterInfo)
     
 End Sub
 
-Public Sub FillDocument(registers As Collection)
-            
-    Dim item As C_RegisterInfo
-    For Each item In registers
-        Call Form_Register.FixPageNumbers(1, item)
-        FillOneDocument item
-    Next
-    
-End Sub
+
 
 Public Function DivRegister() As Collection
     Dim registers As New Collection
@@ -147,7 +147,9 @@ Private Function PrepareCover(curRegister As C_RegisterInfo) As C_CoverInfo
 End Function
 
 Private Sub FillOneCoverDocAndSave(nameIndex As String, cover As C_CoverInfo)
-    Call CreateFolder("ОБЛОЖКИ")
+    Dim newFolderName As String
+    newFolderName = "ОБЛОЖКИ"
+    Call CreateFolder(newFolderName)
     
     ' Создать новый файл по шаблону с обложкой
     CreateNewCoverDoc
@@ -164,8 +166,12 @@ Private Sub FillOneCoverDocAndSave(nameIndex As String, cover As C_CoverInfo)
     ActiveDocument.Close
 End Sub
 
+
+
 Private Sub FillOneRegisterDocAndSave(nameIndex As String, cover As C_CoverInfo)
-    Call CreateFolder("ОПИСИ")
+    Dim newFolderName As String
+    newFolderName = "ОПИСИ"
+    Call CreateFolder(newFolderName)
     
     ' Создать новый файл по шаблону с описью
     CreateNewRegisterDoc
@@ -182,6 +188,8 @@ Private Sub FillOneRegisterDocAndSave(nameIndex As String, cover As C_CoverInfo)
     ActiveDocument.Close
 End Sub
 
+
+
 Private Sub CreateFolder(newFolderName As String)
     Dim newFolderPath As String
     
@@ -190,4 +198,30 @@ Private Sub CreateFolder(newFolderName As String)
     If Dir(newFolderPath, vbDirectory) = "" Then
         MkDir newFolderPath
     End If
+End Sub
+
+
+'---------------------------------------------------------------------------------------------
+
+Private Sub FillOneCoverDocAndAddToAgregator(nameIndex As String, cover As C_CoverInfo)
+       
+    ' Создать новый файл по шаблону с обложкой
+    CreateNewCoverDoc
+    
+    ' Заполнить документ с обложкой
+    FillCoverDoc cover
+    
+    ActiveDocument.Close
+End Sub
+
+Private Sub FillOneRegisterDocAndAddToAgregator(nameIndex As String, cover As C_CoverInfo)
+        
+    ' Создать новый файл по шаблону с описью
+    CreateNewRegisterDoc
+    
+    ' Заполнить документ внутреннюю опись
+    FillRegister cover
+    
+    
+    ActiveDocument.Close
 End Sub
