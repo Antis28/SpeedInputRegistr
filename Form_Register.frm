@@ -34,43 +34,8 @@ Private Sub bt_LoadNext_Click()
 End Sub
 
 Private Sub cb_FillAll_Click()
-    Dim i As Integer
-    Dim coverDoc As Document
-    
-    ' документ для агрегации обложек
-    Set coverDoc = CreateNewAggregateDoc()
-    
-    For i = myBase.CountInKprBase To 1 Step -1
-        ' Загрузить информацию об описи о обложке
-        Call LoadRegister(i)
-        
-        ' Нет записей в описи, идем дальше
-        If register.count = 0 Then
-            GoTo nextCoverRec
-        End If
-        
-        Dim registers As Collection ' список описей
-        ' если в деле больше 250 стр., то его необходимо поделить на тома
-        Set registers = DivRegister()
-                
-        ' заполнить тома обложки
-        Dim item As C_RegisterInfo
-        For Each item In registers
-            Call Form_Register.FixPageNumbers(1, item)
-            
-            ' заполнить 1 обложку
-            Call FillOneCoverDocByRegister(item)
-            
-            Selection.WholeStory
-            Selection.Copy
-            ActiveDocument.Close SaveChanges:=wdDoNotSaveChanges
-            coverDoc.Activate
-            Selection.Paste
-            
-            SaveAccompanying "Все обложки"
-        Next
-nextCoverRec:
-    Next i
+    Call AggregateCovers
+    Call AggregateRegisters
 End Sub
 
 Private Sub LoadLast_Click()
@@ -804,4 +769,91 @@ Private Sub FillDocByTemplatesAndSave()
     
     ' заполнить шаблоны для описи и обложки
     FillDocumentAndSave registers
+End Sub
+
+
+Private Sub AggregateCovers()
+    Dim i As Integer
+    Dim coverDoc As Document
+    Dim aggregateFileName As String
+    aggregateFileName = "Все обложки"
+    
+    ' документ для агрегации обложек
+    Set coverDoc = CreateNewAggregateDoc()
+    
+    For i = myBase.CountInKprBase To 1 Step -1
+        ' Загрузить информацию об описи о обложке
+        Call LoadRegister(i)
+        
+        ' Нет записей в описи, идем дальше
+        If register.count = 0 Then
+            GoTo nextCoverRec
+        End If
+        
+        Dim registers As Collection ' список описей
+        ' если в деле больше 250 стр., то его необходимо поделить на тома
+        Set registers = DivRegister()
+                
+        ' заполнить тома обложки
+        Dim item As C_RegisterInfo
+        For Each item In registers
+            Call Form_Register.FixPageNumbers(1, item)
+            
+            ' заполнить 1 обложку
+            Call FillOneCoverDocByRegister(item)
+            
+            Selection.WholeStory
+            Selection.Copy
+            ActiveDocument.Close SaveChanges:=wdDoNotSaveChanges
+            coverDoc.Activate
+            Selection.Paste
+            
+            Call SaveAccompanying(aggregateFileName)
+        Next
+nextCoverRec:
+    Next i
+    coverDoc.Close
+End Sub
+
+Private Sub AggregateRegisters()
+    Dim i As Integer
+    Dim regDoc As Document
+    Dim aggregateFileName As String
+    aggregateFileName = "Все описи"
+    
+    ' документ для агрегации описей
+    Set regDoc = CreateNewAggregateDoc()
+    
+    For i = myBase.CountInKprBase To 1 Step -1
+        ' Загрузить информацию об описи о обложке
+        Call LoadRegister(i)
+        
+        ' Нет записей в описи, идем дальше
+        If register.count = 0 Then
+            GoTo nextCoverRec
+        End If
+        
+        Dim registers As Collection ' список описей
+        ' если в деле больше 250 стр., то его необходимо поделить на тома
+        Set registers = DivRegister()
+                
+        ' заполнить тома обложки
+        Dim item As C_RegisterInfo
+        For Each item In registers
+            Call Form_Register.FixPageNumbers(1, item)
+            
+            ' заполнить 1 опись
+            Call FillOneRegisterDocByRegister(item)
+            
+            Selection.WholeStory
+            Selection.Copy
+            ActiveDocument.Close SaveChanges:=wdDoNotSaveChanges
+            regDoc.Activate
+            Selection.Paste
+            
+             Call SaveAccompanying(aggregateFileName)
+        Next
+nextCoverRec:
+    Next i
+    regDoc.Close
 End Sub

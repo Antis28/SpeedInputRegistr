@@ -232,3 +232,14 @@ Private Sub FillOneRegisterDoc(cover As C_CoverInfo)
     ' Заполнить документ внутреннюю опись
    Call FillRegister(cover)
 End Sub
+
+Public Sub FillOneRegisterDocByRegister(curRegister As C_RegisterInfo)
+    Dim cover As C_CoverInfo
+    Set cover = PrepareCover(curRegister)
+    
+    ' Создать новый файл по шаблону с описью
+   Call CreateNewRegisterDoc
+    
+    ' Заполнить документ внутреннюю опись
+   Call FillRegister(cover)
+End Sub
