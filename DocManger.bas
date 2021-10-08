@@ -15,39 +15,46 @@ Public Sub CreateNewDocment()
     Documents.Add templatePath
 End Sub
 
-' Создать документ обложки по шаблону
-Public Sub CreateNewCoverDoc()
-    Dim templatePath As String
+' Создать документ для агрегации по шаблону
+Public Sub CreateNewAggregateDoc()
     Dim templateName As String
-    Dim fullPath As String
+    templateName = "#Композиция#.dot"
     
-    templateName = "#ОБЛОЖКА#.dot"
-    
-    templatePath = "C:\Documents and Settings\PENSION\Рабочий стол\Обложки для архива КПР\"
-    If Dir(templatePath) = "" Then
-        templatePath = "M:\My_projects\My_Progi\VBA\Автоматизция описи\"
-    End If
-    
-    fullPath = templatePath & templateName
-    Documents.Add fullPath
+    Dim templateFullPath As String
+    templateFullPath = GenerateFullPath(templateName)
+    Documents.Add templateFullPath
 End Sub
 
 ' Создать документ обложки по шаблону
-Public Sub CreateNewRegisterDoc()
-    Dim templatePath As String
+Public Sub CreateNewCoverDoc()
     Dim templateName As String
-    Dim fullPath As String
+    templateName = "#ОБЛОЖКА#.dot"
     
+    Dim templateFullPath As String
+    templateFullPath = GenerateFullPath(templateName)
+    Documents.Add templateFullPath
+End Sub
+
+' Создать документ описи по шаблону
+Public Sub CreateNewRegisterDoc()
+    Dim templateName As String
     templateName = "#ОПИСЬ ВНУТРЕННЯЯ#.dot"
+    
+    Dim templateFullPath As String
+    templateFullPath = GenerateFullPath(templateName)
+    Documents.Add templateFullPath
+End Sub
+
+Private Function GenerateFullPath(templateName As String) As String
+    Dim templatePath As String
     
     templatePath = "C:\Documents and Settings\PENSION\Рабочий стол\Обложки для архива КПР\"
     If Dir(templatePath) = "" Then
         templatePath = "M:\My_projects\My_Progi\VBA\Автоматизция описи\"
     End If
     
-    fullPath = templatePath & templateName
-    Documents.Add fullPath
-End Sub
+    GenerateFullPath = templatePath & templateName
+End Function
 
 Public Sub FillDocumentAndSave(registers As Collection)
             
@@ -219,7 +226,7 @@ End Sub
 Public Sub FillOneRegisterDocAndAggregate(curRegister As C_RegisterInfo)
     Dim cover As C_CoverInfo
     Set cover = PrepareCover(curRegister)
-    Call FillOneCoverDoc(cover)
+    Call FillOneRegisterDoc(cover)
 End Sub
 
 Private Sub FillOneCoverDoc(cover As C_CoverInfo)
