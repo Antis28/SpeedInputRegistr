@@ -19,6 +19,8 @@ Private okpo As String
 Private name As String
 Private years As String
 Private sheetCount As String
+Private numberInBase As String
+
 Private lastChange As String
 Private index As String
 
@@ -41,7 +43,7 @@ Public Function Save(data As Collection)
     Dim node As IXMLDOMNode
     
     For Each item In data
-        'Вызов функции добавления сотрудника компании
+        'Вызов функции добавления
         Set node = createCoverElement(item)
         saver.Add node
     Next
@@ -60,6 +62,8 @@ Private Function createCoverElement(enterprise As C_CoverInfo) As Variant
     Element.setAttribute name, enterprise.NameEnterprise
     Element.setAttribute years, enterprise.years
     Element.setAttribute sheetCount, enterprise.sheetCount
+    
+    Element.setAttribute numberInBase, enterprise.numberInBase
     
     Element.setAttribute lastChange, enterprise.lastChange
     
@@ -97,6 +101,7 @@ Sub Class_Initialize()
     name = "name"
     years = "years"
     sheetCount = "sheetCount"
+    numberInBase = "numberInBase"
     lastChange = "lastChange"
     index = "id"
 

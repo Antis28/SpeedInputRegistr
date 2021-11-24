@@ -18,13 +18,16 @@ Public years As String
 Public sheetCount As String
 Public index As Integer
 Public lastChange As String
+Public numberInBase As String
 Public innerRegistry As New Collection
 
 
 
-
+' Не используется?
 Public Sub Construct(indx As Integer, name As String, _
-                    okpo As String, year As String, _
+                    okpo As String, _
+                    numberInBaseVal As String, _
+                    year As String, _
                     sheets As String, _
                     innerReg As Collection _
                     )
@@ -34,5 +37,6 @@ Public Sub Construct(indx As Integer, name As String, _
     sheetCount = sheets
     index = indx
     Set innerRegistry = innerReg
+    numberInBase
     'lastChange = DatePart("dd.mm.yyyy", Now)
 End Sub

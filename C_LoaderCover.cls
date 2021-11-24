@@ -20,6 +20,7 @@ Private name As String
 Private years As String
 Private sheetCount As String
 Private index As String
+Private numberInBase As String
 
 Private lastChange As String
 
@@ -53,6 +54,8 @@ Private Function ConstructItem(node As IXMLDOMNode, reader As C_XmlReader) As C_
     
     cover.OkpoEnterprise = GetAndCheckNodeValue(attr, okpo)
     
+    cover.numberInBase = GetAndCheckNodeValue(attr, numberInBase)
+    
     cover.sheetCount = GetAndCheckNodeValue(attr, sheetCount)
     
     cover.years = GetAndCheckNodeValue(attr, years)
@@ -83,6 +86,7 @@ Sub Class_Initialize()
     years = "years"
     sheetCount = "sheetCount"
     index = "id"
+    numberInBase = "numberInBase"
     
     lastChange = "lastChange"
 End Sub

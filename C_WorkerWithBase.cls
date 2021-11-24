@@ -67,6 +67,7 @@ Public Sub Update(cover As C_CoverInfo)
     item.OkpoEnterprise = cover.OkpoEnterprise
     item.sheetCount = cover.sheetCount
     item.years = cover.years
+    item.numberInBase = cover.numberInBase
     Set item.innerRegistry = cover.innerRegistry
     item.lastChange = cover.lastChange
 End Sub

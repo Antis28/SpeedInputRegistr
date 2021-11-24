@@ -9,6 +9,10 @@ Public Function GetOkpoEnterprise()
     GetOkpoEnterprise = Form_Register.tb_OkpoEnterprise.value
 End Function
 
+
+Public Function GetNumberInBase()
+    GetNumberInBase = Form_Register.tb_NumberInBase.value
+End Function
 Public Function GetYears()
     GetYears = Form_Cover.tb_Years.value
 End Function

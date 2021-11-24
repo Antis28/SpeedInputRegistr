@@ -8,6 +8,7 @@ Public Function CreateCoverWithOutID(curRegister As C_RegisterInfo) As C_CoverIn
     
     cover.NameEnterprise = GetNameEnterprise()
     cover.OkpoEnterprise = GetOkpoEnterprise()
+    cover.numberInBase = GetNumberInBase()
     
     cover.years = curRegister.getPeriod()
     
@@ -28,10 +29,3 @@ Public Function CreateCoverWithID() As C_CoverInfo
         
     Set CreateCoverWithID = cover
 End Function
-
-Private Sub FillFormFromReport(report As C_CoverInfo)
-  Form_Cover.tb_NameEnterprise = cover.NameEnterprise
-  Form_Cover.tb_OkpoEnterprise = cover.OkpoEnterprise
-  Form_Cover.tb_Years = cover.years
-  Form_Cover.tb_sheetCount = cover.sheetCount
-End Sub
