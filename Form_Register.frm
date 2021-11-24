@@ -2,12 +2,12 @@ VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} Form_Register 
    OleObjectBlob   =   "Form_Register.frx":0000
    Caption         =   "ОБЛОЖКА + ВНУТРЕННЯЯ ОПИСЬ"
-   ClientHeight    =   8304
-   ClientLeft      =   48
-   ClientTop       =   336
-   ClientWidth     =   7572
+   ClientHeight    =   8310
+   ClientLeft      =   45
+   ClientTop       =   330
+   ClientWidth     =   7575
    StartUpPosition =   1  'CenterOwner
-   TypeInfoVer     =   120
+   TypeInfoVer     =   126
 End
 Attribute VB_Name = "Form_Register"
 Attribute VB_Base = "0{1EB37D80-B564-4705-A43F-8041382E3FE4}{4473B81F-4065-4D70-B524-9C444C973791}"
@@ -29,15 +29,31 @@ Private Sub cb_calc_Click()
 End Sub
 
 Private Sub bt_LoadNext_Click()
-    regNumber = regNumber + 1
-    Call LoadRegister(regNumber)
-    cb_docNames.SetFocus
+    Call LoadNextCover
 End Sub
 
 Private Sub cb_FillAll_Click()
     Call AggregateCovers
     Call AggregateRegisters
 End Sub
+
+Private Sub cb_formDocs_Click()
+
+End Sub
+
+Private Sub cb_sheetSumma_Click()
+    Dim i As Integer
+    Dim sheetCount As Integer
+ 
+    For i = 1 To myBase.CountInKprBase
+        Dim cover As C_CoverInfo
+        Set cover = myBase.GetKprItem(i)
+        sheetCount = sheetCount + Int(cover.sheetCount)
+    Next i
+    MsgBox "Количество листов в базе = " & sheetCount
+End Sub
+
+
 
 Private Sub LoadLast_Click()
     regNumber = regNumber - 1
@@ -81,41 +97,7 @@ Private Sub cb_RemoveRegisterFromBase_Click()
 End Sub
 
 Private Sub cb_SaveTobase_Click()
-    Dim listIndex As Integer
-    Dim regNumber As Integer
-    Dim cover As C_CoverInfo
-    
-    listIndex = lb_RecordsList.listIndex
-    
-    regNumber = Int(l_indexInBase.Caption)
- 
- ' Сохранить в базу
-
-    If myBase.IndexExists(regNumber) Then
-        ' Взять существующую
-        Set cover = CreateCoverWithOutID(register)
-        cover.index = regNumber
-        myBase.UpdateRecordInKprBase cover
-    Else
-        ' Создать новую
-        Set cover = CreateCoverWithOutID(register)
-        myBase.SaveKprBase cover
-    End If
-    
-    myBase.LoadAllBases
-    
-    If l_indexInBase.Caption = "0" Then
-        bt_LoadNext_Click
-    End If
-    
-    If listIndex < lb_RecordsList.ListCount - 1 Then
-        lb_RecordsList.listIndex = listIndex
-    Else
-         lb_RecordsList.listIndex = lb_RecordsList.ListCount - 1
-    End If
-    
-    Call ClearInputField
-    cb_docNames.SetFocus
+    Call SaveToBase
 End Sub
 
 Private Sub CommandButton6_Click()
@@ -126,6 +108,7 @@ End Sub
 
 Private Sub cb_CleanAllFields_Click()
     Call ClearInputField
+    Call Form_Register.cb_docNames.SetFocus
 End Sub
 
 Private Sub cb_docNames_Change()
@@ -219,6 +202,7 @@ Private Sub UserForm_Activate()
    id = 0
    
    myBase.LoadAllBases
+
    ShowRecordTemplates
    
    regNumber = myBase.CountInKprBase
@@ -317,9 +301,7 @@ End Sub
 
 Private Sub cb_AddDocInList_Click()
 
-    'Call CheckExistDocumentName
-
-     'Собрали информацию о документе(ах) одного типа
+    'Собрали информацию о документе(ах) одного типа
     Dim record As C_RecordInfo
     Set record = New C_RecordInfo
 '------------------------------------------------------
@@ -390,7 +372,7 @@ Private Sub cb_AddDocInList_Click()
     
     Call ClearInputField
     Call ClearTemlateField
-    
+    Call SaveToBase
 endsub:
 End Sub
 
@@ -445,15 +427,21 @@ Public Sub UpdateScreen()
     If sheetsLeft > 250 Then
         l_sheetsLeft.BackColor = vbRed
         l_sheetsLeft.ForeColor = vbYellow
+        Form_Register.BackColor = vbRed
+    ElseIf sheetsLeft > 240 Then
+        'Form_Register.BackColor = &HC0FFFF
     ElseIf sheetsLeft > 200 Then
         l_sheetsLeft.BackColor = vbYellow
         l_sheetsLeft.ForeColor = vbButtonText
+        Form_Register.BackColor = vbButtonFace
     ElseIf sheetsLeft > 100 Then
        l_sheetsLeft.BackColor = vbGreen
        l_sheetsLeft.ForeColor = vbButtonText
+       Form_Register.BackColor = vbButtonFace
     Else
         l_sheetsLeft.BackColor = "040001"
         l_sheetsLeft.ForeColor = vbButtonText
+        Form_Register.BackColor = vbButtonFace
     End If
 End Sub
 
@@ -574,6 +562,7 @@ Private Sub LoadRegisterByIndex(regNumber As Integer)
     Dim newRegister As New Collection
     Dim item As C_RecordInfo
     
+     
     Set temp = myBase.GetKprItem(regNumber)
     ' Создаем копию описи чтобы не затереть оригинал
     For Each item In temp.innerRegistry
@@ -586,6 +575,8 @@ Private Sub LoadRegisterByIndex(regNumber As Integer)
     
     tb_NameEnterprise.text = temp.NameEnterprise
     tb_OkpoEnterprise.text = temp.OkpoEnterprise
+    
+    tb_NumberInBase.text = temp.numberInBase
     
     l_indexInBase.Caption = temp.index
 End Sub
@@ -607,6 +598,7 @@ Public Sub ClearInputField()
     tb_sheetCount.text = ""
     tb_docNumber.text = ""
     
+    
     tb_lastSheet.text = ""
 End Sub
 
@@ -626,6 +618,7 @@ End Sub
 Public Sub ClearHeaderRegister()
     tb_NameEnterprise.text = ""
     tb_OkpoEnterprise.text = ""
+    tb_NumberInBase.text = ""
     l_indexInBase.Caption = "0"
 End Sub
 
@@ -712,6 +705,13 @@ End Sub
 Private Sub LoadRegister(ByVal index As Integer)
     Dim regNumber As Integer
     regNumber = CheckRegNumber(index)
+    
+    If regNumber = 0 Then
+        Debug.Print ("LoadRegister -> index = 0")
+        Exit Sub
+    End If
+
+    
     Call LoadRegisterByIndex(regNumber)
     Call UpdateScreen
     Call ClearAllFlags
@@ -858,4 +858,12 @@ Private Sub AggregateRegisters()
 nextCoverRec:
     Next i
     regDoc.Close
+End Sub
+
+
+
+Public Sub LoadNextCover()
+    regNumber = regNumber + 1
+    Call LoadRegister(regNumber)
+    cb_docNames.SetFocus
 End Sub
