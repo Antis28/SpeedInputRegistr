@@ -40,6 +40,7 @@ End Sub
 Public Sub LoadAllBases()
     Call LoadCoverBase
     Call LoadNamesBase
+    'Call MsgBox("Базы загружены!", vbInformation)
 End Sub
 
 Public Function IndexExists(index As Integer) As Boolean

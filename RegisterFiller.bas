@@ -46,7 +46,7 @@ Public Sub FillRegister(cover As C_CoverInfo)
     sheetCount = ActiveDocument.Content.ComputeStatistics(wdStatisticPages)
     
     
-    FillRegisterInWords sheetCount - 1
+    FillRegisterInWords sheetCount - 2
 End Sub
 
 ' Заполнить всего страниц словами
